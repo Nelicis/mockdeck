@@ -7,30 +7,30 @@
 
 ##  Features
 
-- ** Instant Setup:** Run `mockdeck init` to generate a starter database, or point it at any existing JSON file.
-- ** Complete RESTful CRUD:**
+- **Instant Setup:** Run `mockdeck init` to generate a starter database, or point it at any existing JSON file.
+- **Complete RESTful CRUD:**
   - `GET /resource` — List collection (with query filters, search, sort, pagination)
   - `GET /resource/:id` — Lookup single item
   - `POST /resource` — Create new item (with auto-generated sequential or UUID IDs)
   - `PUT /resource/:id` — Full replacement of item
   - `PATCH /resource/:id` — Partial field merge
   - `DELETE /resource/:id` — Remove item
-- ** Query Engine:**
+- **Query Engine:**
   - **Exact Filtering:** `GET /users?role=admin`
   - **Full-Text Search:** `GET /users?q=alice`
   - **Sorting:** `GET /users?_sort=name&_order=desc`
   - **Pagination:** `GET /users?_page=1&_limit=10` (includes `X-Total-Count`, `X-Page`, `X-Total-Pages` headers)
-- ** Chaos & Network Simulation:**
+- **Chaos & Network Simulation:**
   - **Latency Simulation:** `--delay 250` or jitter ranges `--delay 100-500`
   - **Fault Injection:** `--chaos 0.15` (randomly simulates 500 errors on 15% of requests)
-- ** Seamless CORS:** Permissive CORS enabled by default for painless frontend (React, Vue, Svelte, iOS, Android) development.
-- ** Beautiful Terminal UI:** Rich startup dashboard and real-time color-coded HTTP request streaming logs.
-- ** Safe Persistence:** In-memory speed with atomic disk persistence (`os.replace`) to eliminate file corruption.
-- ** Zero Heavy Web Frameworks:** Built on Python's standard library `http.server.ThreadingHTTPServer` — the only dependency is `rich`!
+- **Seamless CORS:** Permissive CORS enabled by default for painless frontend (React, Vue, Svelte, iOS, Android) development.
+- **Beautiful Terminal UI:** Rich startup dashboard and real-time color-coded HTTP request streaming logs.
+- **Safe Persistence:** In-memory speed with atomic disk persistence (`os.replace`) to eliminate file corruption.
+- **Zero Heavy Web Frameworks:** Built on Python's standard library `http.server.ThreadingHTTPServer` — the only dependency is `rich`!
 
 ---
 
-##  Quickstart
+## Quickstart
 
 ### 1. Installation
 
@@ -70,7 +70,7 @@ Chaos Faults:   disabled
 
 ---
 
-##  API Usage Guide
+## API Usage Guide
 
 ### Fetch & Filter
 
@@ -122,7 +122,7 @@ curl -X DELETE http://127.0.0.1:8000/users/1
 
 ---
 
-##  CLI Options & Flags
+## CLI Options & Flags
 
 ```bash
 mockdeck serve [FILE] [OPTIONS]
@@ -140,7 +140,7 @@ mockdeck serve [FILE] [OPTIONS]
 
 ---
 
-##  Running Tests
+## Running Tests
 
 `mockdeck` has a comprehensive automated test suite with zero test framework dependencies:
 
@@ -150,6 +150,6 @@ python -m unittest discover -s tests -v
 
 ---
 
-##  License
+## License
 
 MIT
