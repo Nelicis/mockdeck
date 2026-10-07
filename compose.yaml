@@ -1,0 +1,10 @@
+services:
+  mockdeck:
+    build: .
+    image: mockdeck:latest
+    container_name: mockdeck
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./db.json:/data/db.json
+    restart: unless-stopped

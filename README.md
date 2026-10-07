@@ -35,12 +35,11 @@
 ### 1. Installation
 
 ```bash
-# Install directly or in a virtual environment
+# Install directly from GitHub
+pip install git+https://github.com/Nelicis/mockdeck.git
+
+# Or install from cloned repository
 pip install .
-```
-Or:
-```bash
-pip install git+https.//github.com/Nelicis/mockdeck.git
 ```
 
 ### 2. Initialize Starter Data
@@ -70,6 +69,40 @@ Chaos Faults:   disabled
 │ products   3 items   http://127.0.0.1:8000/products                         │
 │ users      3 items   http://127.0.0.1:8000/users                            │
 ╰─────────────────────────────────────────────────────────────────────────────╯
+```
+
+---
+
+## 🐳 Running with Docker
+
+Run `mockdeck` in a lightweight container without needing Python installed locally:
+
+### Run with Default Starter Data
+
+```bash
+# Build the image
+docker build -t mockdeck .
+
+# Run container on port 8000
+docker run -p 8000:8000 mockdeck
+```
+
+### Mount Your Own Dataset
+
+Persist and live-edit your local data file inside the container:
+
+```bash
+# Linux / macOS
+docker run -p 8000:8000 -v $(pwd)/db.json:/data/db.json mockdeck
+
+# Windows (PowerShell)
+docker run -p 8000:8000 -v ${PWD}/db.json:/data/db.json mockdeck
+```
+
+### Using Docker Compose
+
+```bash
+docker compose up
 ```
 
 ---
