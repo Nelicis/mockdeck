@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mockdeck"
+version = "0.1.0"
+description = "Instant Mock REST API Server CLI from JSON files"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+mockdeck = "mockdeck.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
