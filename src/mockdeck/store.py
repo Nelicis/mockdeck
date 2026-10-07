@@ -71,7 +71,10 @@ class DataStore:
             items = [
                 item
                 for item in items
-                if isinstance(item, dict) and str(item.get(key, "")).lower() in lower_vals
+                if isinstance(item, dict)
+                and key in item
+                and item[key] is not None
+                and str(item[key]).lower() in lower_vals
             ]
 
         # 2. Full-text search via 'q' parameter

@@ -115,5 +115,16 @@ class TestDataStoreCore(unittest.TestCase):
         self.assertIsNone(items)
         self.assertEqual(meta, {})
 
+    def test_query_filter_absent_field(self):
+        # Create an item without the 'role' field
+        self.store.create_item("users", {"name": "NoRoleUser"})
+        # Querying for empty role should not match the user who doesn't even have a 'role' key
+        items, _ = self.store.query_collection("users", {"role": [""]})
+        self.assertEqual(len(items), 0)
+
+        # Querying for role="none" should not match None
+        items_none, _ = self.store.query_collection("users", {"role": ["none"]})
+        self.assertEqual(len(items_none), 0)
+
 if __name__ == "__main__":
     unittest.main()

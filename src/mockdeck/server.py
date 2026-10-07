@@ -62,7 +62,12 @@ class MockRequestHandler(BaseHTTPRequestHandler):
 
     def _read_json_body(self) -> tuple[bool, Any]:
         """Reads request body and parses JSON. Returns (success, data_or_error_msg)."""
-        content_len = int(self.headers.get("Content-Length", 0))
+        raw_header = self.headers.get("Content-Length", 0)
+        try:
+            content_len = int(raw_header)
+        except (ValueError, TypeError):
+            return False, "Invalid Content-Length header"
+
         if content_len == 0:
             return True, {}
         try:
@@ -167,7 +172,8 @@ class MockRequestHandler(BaseHTTPRequestHandler):
         resource = parts[0]
         success, body = self._read_json_body()
         if not success or not isinstance(body, dict):
-            self._send_json(400, {"error": "Invalid JSON body"})
+            msg = body if isinstance(body, str) else "Invalid JSON body"
+            self._send_json(400, {"error": msg})
             return
 
         try:
@@ -191,7 +197,8 @@ class MockRequestHandler(BaseHTTPRequestHandler):
         resource, item_id = parts[0], parts[1]
         success, body = self._read_json_body()
         if not success or not isinstance(body, dict):
-            self._send_json(400, {"error": "Invalid JSON body"})
+            msg = body if isinstance(body, str) else "Invalid JSON body"
+            self._send_json(400, {"error": msg})
             return
 
         try:
@@ -218,7 +225,8 @@ class MockRequestHandler(BaseHTTPRequestHandler):
         resource, item_id = parts[0], parts[1]
         success, body = self._read_json_body()
         if not success or not isinstance(body, dict):
-            self._send_json(400, {"error": "Invalid JSON body"})
+            msg = body if isinstance(body, str) else "Invalid JSON body"
+            self._send_json(400, {"error": msg})
             return
 
         try:

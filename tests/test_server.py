@@ -173,5 +173,17 @@ class TestMockServer(unittest.TestCase):
             server.shutdown()
             server.server_close()
 
+    def test_invalid_content_length_header(self):
+        import http.client
+        conn = http.client.HTTPConnection("127.0.0.1", self.port)
+        conn.putrequest("POST", "/items")
+        conn.putheader("Content-Length", "invalid-int")
+        conn.endheaders()
+        resp = conn.getresponse()
+        self.assertEqual(resp.status, 400)
+        data = json.loads(resp.read().decode("utf-8"))
+        self.assertIn("Invalid Content-Length", data.get("error", ""))
+        conn.close()
+
 if __name__ == "__main__":
     unittest.main()
