@@ -153,3 +153,4 @@ python -m unittest discover -s tests -v
 ## License
 
 MIT
+https://mit-license.org/
