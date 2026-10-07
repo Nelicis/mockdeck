@@ -50,6 +50,84 @@ class DataStore:
                 return None
             return copy.deepcopy(self._data[resource])
 
+    def query_collection(
+        self,
+        resource: str,
+        params: dict[str, list[str]],
+    ) -> tuple[list[dict[str, Any]] | None, dict[str, int]]:
+        """Filters, sorts, searches, and paginates a collection."""
+        with self._lock:
+            if resource not in self._data or not isinstance(self._data[resource], list):
+                return None, {}
+
+            items = copy.deepcopy(self._data[resource])
+
+        # 1. Exact field filtering (exclude reserved keywords)
+        reserved_keys = {"_sort", "_order", "_page", "_limit", "q"}
+        for key, vals in params.items():
+            if key in reserved_keys:
+                continue
+            lower_vals = [v.lower() for v in vals]
+            items = [
+                item
+                for item in items
+                if isinstance(item, dict) and str(item.get(key, "")).lower() in lower_vals
+            ]
+
+        # 2. Full-text search via 'q' parameter
+        if "q" in params and params["q"]:
+            search_term = params["q"][0].lower()
+            filtered: list[dict[str, Any]] = []
+            for item in items:
+                matched = False
+                for v in item.values():
+                    if isinstance(v, (str, int, float, bool)) and search_term in str(v).lower():
+                        matched = True
+                        break
+                if matched:
+                    filtered.append(item)
+            items = filtered
+
+        total_count = len(items)
+        metadata: dict[str, int] = {"X-Total-Count": total_count}
+
+        # 3. Sorting via '_sort' and '_order'
+        if "_sort" in params and params["_sort"]:
+            sort_field = params["_sort"][0]
+            order = params.get("_order", ["asc"])[0].lower()
+            reverse = order == "desc"
+
+            def sort_key(item: dict[str, Any]) -> Any:
+                val = item.get(sort_field)
+                return "" if val is None else val
+
+            try:
+                items.sort(key=sort_key, reverse=reverse)
+            except TypeError:
+                items.sort(key=lambda item: str(sort_key(item)), reverse=reverse)
+
+        # 4. Pagination via '_page' and '_limit'
+        if "_page" in params or "_limit" in params:
+            try:
+                page = max(1, int(params.get("_page", ["1"])[0]))
+            except ValueError:
+                page = 1
+
+            try:
+                limit = max(1, int(params.get("_limit", ["10"])[0]))
+            except ValueError:
+                limit = 10
+
+            import math
+            total_pages = max(1, math.ceil(total_count / limit))
+            start_idx = (page - 1) * limit
+            items = items[start_idx : start_idx + limit]
+
+            metadata["X-Page"] = page
+            metadata["X-Total-Pages"] = total_pages
+
+        return items, metadata
+
     def get_item(self, resource: str, item_id: str | int) -> dict[str, Any] | None:
         """Finds a single item by id."""
         with self._lock:

@@ -81,5 +81,39 @@ class TestDataStoreCore(unittest.TestCase):
             disk_data = json.load(f)
         self.assertEqual(len(disk_data["users"]), 2)
 
+    def test_query_filter_exact(self):
+        items, meta = self.store.query_collection("users", {"role": ["admin"]})
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["name"], "Alice")
+        self.assertEqual(meta["X-Total-Count"], 1)
+
+    def test_query_sorting(self):
+        items_asc, _ = self.store.query_collection("users", {"_sort": ["name"], "_order": ["asc"]})
+        self.assertEqual([i["name"] for i in items_asc], ["Alice", "Bob"])
+
+        items_desc, _ = self.store.query_collection("users", {"_sort": ["name"], "_order": ["desc"]})
+        self.assertEqual([i["name"] for i in items_desc], ["Bob", "Alice"])
+
+    def test_query_pagination(self):
+        # Seed extra items
+        for i in range(3, 11):
+            self.store.create_item("users", {"name": f"User {i}", "role": "user"})
+        
+        items, meta = self.store.query_collection("users", {"_page": ["2"], "_limit": ["3"]})
+        self.assertEqual(len(items), 3)
+        self.assertEqual(meta["X-Total-Count"], 10)
+        self.assertEqual(meta["X-Page"], 2)
+        self.assertEqual(meta["X-Total-Pages"], 4)
+
+    def test_query_full_text_search(self):
+        items, _ = self.store.query_collection("users", {"q": ["lic"]})
+        self.assertEqual(len(items), 1)
+        self.assertEqual(items[0]["name"], "Alice")
+
+    def test_query_unknown_collection(self):
+        items, meta = self.store.query_collection("unknown", {})
+        self.assertIsNone(items)
+        self.assertEqual(meta, {})
+
 if __name__ == "__main__":
     unittest.main()
