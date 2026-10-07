@@ -38,6 +38,10 @@
 # Install directly or in a virtual environment
 pip install .
 ```
+Or:
+```bash
+pip install git+https.//github.com/Nelicis/mockdeck.git
+```
 
 ### 2. Initialize Starter Data
 
